@@ -19,4 +19,8 @@ extension BuildContextExt on BuildContext {
   pop([dynamic result]) {
     return Navigator.of(this).pop(result);
   }
+
+  popUntilFirst() {
+    Navigator.of(this).popUntil((route) => route.isFirst);
+  }
 }
