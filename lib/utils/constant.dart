@@ -1,16 +1,16 @@
 // ignore_for_file: constant_identifier_names
 
 class Constants {
-  static String baseUrl = 'https://newsapi.org/v2';
-  static String apiKey = '9b617a87de0d4561bbfb8d6ce0f0f809';
+  static String internationalBaseUrl = 'https://newsapi.org/v2';
+  static String internationalApiKey = '';
+
+  static String domesticBaseUrl = 'https://newsdata.io/api/1/news';
+  static String domesticApiKey = '';
 }
 
-enum Header {
-  All,
-  Latest,
+enum Category {
+  General,
   Business,
-  Economic,
-  Policy,
   Entertainment,
   Health,
   Science,

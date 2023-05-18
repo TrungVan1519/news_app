@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/pages/article_page.dart';
-import 'package:news_app/pages/booked_article_page.dart';
+import 'package:news_app/pages/international_news_list_page.dart';
+import 'package:news_app/pages/domestic_news_list_page.dart';
 import 'package:news_app/pages/profile_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/widgets/bottom_app_bar_item_widget.dart';
@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var i = 0;
-  final pages = const [ArticlePage(), BookedArticlePage()];
+  final pages = const [DomesticNewsListPage(), InternationalNewsListPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             BottomAppBarItemWidget(
               icon: Icon(
-                Icons.article,
+                Icons.article_rounded,
                 color: i == 0 ? Colors.blue : Colors.black,
               ),
               index: 0,
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 8),
             BottomAppBarItemWidget(
               icon: Icon(
-                Icons.list,
+                Icons.text_snippet_rounded,
                 color: i == 1 ? Colors.blue : Colors.black,
               ),
               index: 1,

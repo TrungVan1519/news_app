@@ -1,12 +1,13 @@
 import 'package:equatable/equatable.dart';
 
-class Source extends Equatable {
+class InternationalSource extends Equatable {
   final dynamic id;
   final String? name;
 
-  const Source({this.id, this.name});
+  const InternationalSource({this.id, this.name});
 
-  factory Source.fromJson(Map<String, dynamic> json) => Source(
+  factory InternationalSource.fromJson(Map<String, dynamic> json) =>
+      InternationalSource(
         id: json['id'] as dynamic,
         name: json['name'] as String?,
       );

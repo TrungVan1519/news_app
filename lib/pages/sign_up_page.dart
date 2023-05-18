@@ -1,9 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/widgets/button_widget.dart';
 import 'package:news_app/widgets/input_widget.dart';
-import 'package:news_app/widgets/link_text_widget.dart';
+import 'package:news_app/widgets/text_link_widget.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -31,7 +30,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     iconData: Icons.lock,
                     isObscure: true,
                   ),
-                  LinkTextWidget(
+                  TextLinkWidget(
                     onPressed: () {
                       context.pop();
                     },

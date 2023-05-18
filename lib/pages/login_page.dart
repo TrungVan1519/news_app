@@ -4,7 +4,7 @@ import 'package:news_app/pages/sign_up_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/widgets/button_widget.dart';
 import 'package:news_app/widgets/input_widget.dart';
-import 'package:news_app/widgets/link_text_widget.dart';
+import 'package:news_app/widgets/text_link_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                     iconData: Icons.lock,
                     isObscure: true,
                   ),
-                  LinkTextWidget(
+                  TextLinkWidget(
                     onPressed: () {
                       context.push(const SignUpPage());
                     },
