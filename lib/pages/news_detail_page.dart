@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/domestic_news/domestic_news.dart';
 import 'package:news_app/models/international_news/international_news.dart';
+import 'package:news_app/pages/news_original_detail_page.dart';
+import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/widgets/text_link_widget.dart';
 import 'package:news_app/widgets/loading_image_widget.dart';
 import 'package:news_app/widgets/text_content_widget.dart';
@@ -54,11 +56,8 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
         ),
         TextLinkWidget(
           onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (_) {
-                return Container();
-              },
+            context.push(
+              NewsOriginalDetailPage(url: widget.domesticNews?.link),
             );
           },
           link: widget.domesticNews?.link,
@@ -95,7 +94,11 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           child: TextContentWidget(text: widget.internationalNews?.content),
         ),
         TextLinkWidget(
-          onPressed: () {},
+          onPressed: () {
+            context.push(
+              NewsOriginalDetailPage(url: widget.internationalNews?.url),
+            );
+          },
           link: widget.internationalNews?.url,
         ),
       ],
