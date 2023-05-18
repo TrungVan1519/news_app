@@ -151,14 +151,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               },
                             );
                           },
-                          child: const Card(
-                            margin: EdgeInsets.only(right: 8),
+                          child: Card(
+                            margin: const EdgeInsets.only(right: 8),
                             elevation: 8,
                             child: SizedBox(
                               height: 150,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                children: const [
                                   Icon(Icons.key),
                                   Text(
                                     'Change password',
@@ -177,14 +177,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           onTap: () {
                             context.push(const BookedArticleListPage());
                           },
-                          child: const Card(
-                            margin: EdgeInsets.only(left: 8),
+                          child: Card(
+                            margin: const EdgeInsets.only(left: 8),
                             elevation: 8,
                             child: SizedBox(
                               height: 150,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                children: const [
                                   Icon(Icons.list),
                                   Text(
                                     'My booked articles',

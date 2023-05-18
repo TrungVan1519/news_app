@@ -53,7 +53,14 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           child: TextContentWidget(text: widget.domesticNews?.content),
         ),
         TextLinkWidget(
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (_) {
+                return Container();
+              },
+            );
+          },
           link: widget.domesticNews?.link,
         ),
       ],

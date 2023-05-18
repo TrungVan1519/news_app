@@ -10,7 +10,7 @@ class BookedArticleListPage extends StatefulWidget {
 class _BookedArticleListPageState extends State<BookedArticleListPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
         child: Column(
           children: [],
