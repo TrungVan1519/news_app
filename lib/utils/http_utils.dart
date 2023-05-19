@@ -13,16 +13,20 @@ class HttpUtils {
     return '';
   }
 
-  static Future<bool> logout(User userData) async {
+  static Future<bool> logout(User user) async {
     return true;
   }
 
-  static Future<DomesticResponse?> getAllDomesticNews(String category) async {
+  static Future<DomesticResponse?> getAllDomesticNews(
+    String category,
+    String? page,
+  ) async {
     final response = await http.get(
       Uri.parse(
-        '${Constants.domesticBaseUrl}?apiKey=${Constants.domesticApiKey}&country=vi,us,gb,cn,ru&language=vi${category == Category.General.name ? '' : '&category=$category'}',
+        '${Constants.domesticBaseUrl}?apiKey=${Constants.domesticApiKey}&country=vi,us,gb,cn,ru&language=vi${category == Category.General.name ? '' : '&category=$category'}${page == null ? '' : '&page=$page'}',
       ),
     );
+    print(response.body);
 
     //! Because response return data in Vietnamese, we need to compile utf8
     return response.statusCode == 200

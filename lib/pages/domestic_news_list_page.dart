@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/models/domestic_news/domestic_response.dart';
+import 'package:news_app/models/domestic_news/domestic_news.dart';
 import 'package:news_app/pages/news_detail_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/utils/constant.dart';
@@ -16,25 +16,59 @@ class DomesticNewsListPage extends StatefulWidget {
 }
 
 class _DomesticNewsListPageState extends State<DomesticNewsListPage> {
-  DomesticResponse? response;
+  List<DomesticNews> newsList = [];
   bool isLoading = false;
+  bool isLoadingMore = false;
   Category selectedCategory = Category.General;
+  ScrollController scrollController = ScrollController();
+  String? page;
+
+  getDomesticNewsList() async {
+    final response = await HttpUtils.getAllDomesticNews(
+      selectedCategory.name,
+      page,
+    );
+    page = response?.nextPage;
+    return response?.results != null ? response!.results! : [];
+  }
+
+  expandDomesticNewsList() async {
+    isLoadingMore = true;
+    setState(() {});
+
+    newsList.addAll(await getDomesticNewsList());
+
+    isLoadingMore = false;
+    setState(() {});
+  }
+
+  initDomesticNewsList() async {
+    isLoading = true;
+    setState(() {});
+
+    newsList.clear();
+    newsList.addAll(await getDomesticNewsList());
+
+    isLoading = false;
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    getAllDomesticNews();
+    initDomesticNewsList();
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        await expandDomesticNewsList();
+      }
+    });
   }
 
-  getAllDomesticNews([String? category]) async {
-    isLoading = true;
-    setState(() {});
-
-    response = await HttpUtils.getAllDomesticNews(
-      category ?? selectedCategory.name,
-    );
-    isLoading = false;
-    setState(() {});
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
   }
 
   @override
@@ -54,7 +88,8 @@ class _DomesticNewsListPageState extends State<DomesticNewsListPage> {
                     onTap: () async {
                       selectedCategory = category;
                       setState(() {});
-                      await getAllDomesticNews(category.name);
+
+                      await initDomesticNewsList();
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -86,10 +121,17 @@ class _DomesticNewsListPageState extends State<DomesticNewsListPage> {
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : response != null
+                  : newsList.isNotEmpty
                       ? ListView.builder(
+                          controller: scrollController,
                           itemBuilder: (_, i) {
-                            final news = response!.results![i];
+                            if (i == newsList.length) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            final news = newsList[i];
 
                             return Card(
                               margin: const EdgeInsets.all(8),
@@ -135,7 +177,7 @@ class _DomesticNewsListPageState extends State<DomesticNewsListPage> {
                               ),
                             );
                           },
-                          itemCount: response!.results!.length,
+                          itemCount: newsList.length + 1,
                         )
                       : const Center(
                           child: TextSubtitleWidget(
