@@ -37,10 +37,12 @@ class HttpUtils {
   }
 
   static Future<InternationalResponse?> getAllInternationalNews(
-      String category) async {
+    String category,
+    int page,
+  ) async {
     final response = await http.get(
       Uri.parse(
-        '${Constants.internationalBaseUrl}/top-headlines?apiKey=${Constants.internationalApiKey}&category=$category&language=en',
+        '${Constants.internationalBaseUrl}/top-headlines?apiKey=${Constants.internationalApiKey}&category=$category&page=$page&language=en',
       ),
     );
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/models/international_news/international_response.dart';
+import 'package:news_app/models/international_news/international_news.dart';
 import 'package:news_app/pages/news_detail_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/utils/constant.dart';
@@ -17,25 +17,59 @@ class InternationalNewsListPage extends StatefulWidget {
 }
 
 class _InternationalNewsListPageState extends State<InternationalNewsListPage> {
-  InternationalResponse? response;
+  List<InternationalNews> newsList = [];
   bool isLoading = false;
+  bool isLoadingMore = false;
   Category selectedCategory = Category.General;
+  ScrollController scrollController = ScrollController();
+  int page = 1;
+
+  getInternationalNewsList() async {
+    final response = await HttpUtils.getAllInternationalNews(
+      selectedCategory.name,
+      page,
+    );
+    page++;
+    return response?.articles != null ? response!.articles! : [];
+  }
+
+  expandInternationalNewsList() async {
+    isLoadingMore = true;
+    setState(() {});
+
+    newsList.addAll(await getInternationalNewsList());
+
+    isLoadingMore = false;
+    setState(() {});
+  }
+
+  initInternationalNews() async {
+    isLoading = true;
+    setState(() {});
+
+    newsList.clear();
+    newsList.addAll(await getInternationalNewsList());
+
+    isLoading = false;
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
-    getAllInternationalNews();
+    initInternationalNews();
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        await expandInternationalNewsList();
+      }
+    });
   }
 
-  getAllInternationalNews([String? category]) async {
-    isLoading = true;
-    setState(() {});
-
-    response = await HttpUtils.getAllInternationalNews(
-      category ?? selectedCategory.name,
-    );
-    isLoading = false;
-    setState(() {});
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
   }
 
   @override
@@ -55,7 +89,8 @@ class _InternationalNewsListPageState extends State<InternationalNewsListPage> {
                     onTap: () async {
                       selectedCategory = category;
                       setState(() {});
-                      await getAllInternationalNews(category.name);
+
+                      await initInternationalNews();
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -87,10 +122,17 @@ class _InternationalNewsListPageState extends State<InternationalNewsListPage> {
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : response != null
+                  : newsList.isNotEmpty
                       ? ListView.builder(
+                          controller: scrollController,
                           itemBuilder: (_, i) {
-                            final news = response!.articles![i];
+                            if (i == newsList.length) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            final news = newsList[i];
 
                             return Card(
                               margin: const EdgeInsets.all(8),
@@ -137,7 +179,7 @@ class _InternationalNewsListPageState extends State<InternationalNewsListPage> {
                               ),
                             );
                           },
-                          itemCount: response!.articles!.length,
+                          itemCount: newsList.length + 1,
                         )
                       : const Center(
                           child: TextSubtitleWidget(
