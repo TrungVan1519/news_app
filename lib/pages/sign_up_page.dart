@@ -1,5 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:news_app/models/response/user.dart';
 import 'package:news_app/utils/build_context_ext.dart';
+import 'package:news_app/utils/http_utils.dart';
 import 'package:news_app/widgets/button_widget.dart';
 import 'package:news_app/widgets/input_widget.dart';
 import 'package:news_app/widgets/text_link_widget.dart';
@@ -12,7 +16,9 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final phoneController = TextEditingController();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
@@ -20,7 +26,9 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   void dispose() {
     super.dispose();
+    nameController.dispose();
     emailController.dispose();
+    phoneController.dispose();
     usernameController.dispose();
     passwordController.dispose();
     passwordConfirmController.dispose();
@@ -62,10 +70,20 @@ class _SignUpPageState extends State<SignUpPage> {
               Column(
                 children: [
                   InputWidget(
+                    controller: nameController,
+                    label: 'Name',
+                    iconData: Icons.text_fields,
+                    isAutoFocus: true,
+                  ),
+                  InputWidget(
                     controller: emailController,
                     label: 'Email',
                     iconData: Icons.email,
-                    isAutoFocus: true,
+                  ),
+                  InputWidget(
+                    controller: phoneController,
+                    label: 'Phone',
+                    iconData: Icons.phone,
                   ),
                   InputWidget(
                     controller: usernameController,
@@ -97,7 +115,30 @@ class _SignUpPageState extends State<SignUpPage> {
                       children: [
                         ButtonWidget(
                           onPressed: () async {
-                            context.pop();
+                            if (passwordController.text !=
+                                passwordConfirmController.text) {
+                              context.showSnackBar('Match your password');
+                            } else {
+                              try {
+                                final response = await HttpUtils.signup(
+                                  User(
+                                    name: nameController.text,
+                                    email: emailController.text,
+                                    phone: phoneController.text,
+                                    username: usernameController.text,
+                                    password: passwordController.text,
+                                  ),
+                                );
+
+                                if (response.status!.code! == 1000) {
+                                  context.pop(true);
+                                } else {
+                                  context.showSnackBar('Fail to sign up');
+                                }
+                              } catch (e) {
+                                context.showSnackBar(e.toString());
+                              }
+                            }
                           },
                           text: 'Sign up',
                         ),

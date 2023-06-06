@@ -2,10 +2,15 @@
 
 class Constants {
   static String internationalBaseUrl = 'https://newsapi.org/v2';
-  static String internationalApiKey = '<Enter your apiKey here>';
+  static String internationalApiKey = '9b617a87de0d4561bbfb8d6ce0f0f809';
 
   static String domesticBaseUrl = 'https://newsdata.io/api/1/news';
-  static String domesticApiKey = '<Enter your apiKey here>';
+  static String domesticApiKey = 'pub_22374e72ee7635f6413c5ff0b682e1ca5733a';
+
+  static String userBaseUrl =
+      'https://user-service-production-8a36.up.railway.app';
+
+  static String keyUser = 'user';
 }
 
 enum Category {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/pages/login_page.dart';
+import 'package:news_app/utils/injections.dart';
 
 void main() {
+  setupInjections();
   runApp(const MyApp());
 }
 

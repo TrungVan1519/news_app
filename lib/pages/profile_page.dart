@@ -1,8 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:news_app/models/response/user.dart';
 import 'package:news_app/pages/booked_article_list_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
+import 'package:news_app/utils/constant.dart';
+import 'package:news_app/utils/http_utils.dart';
+import 'package:news_app/utils/injections.dart';
 import 'package:news_app/widgets/button_widget.dart';
 import 'package:news_app/widgets/input_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,6 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
   double corner = 100;
+  late User user = User.fromJson(
+    jsonDecode(getIt<SharedPreferences>().getString(Constants.keyUser)!),
+  );
 
   @override
   void dispose() {
@@ -44,12 +56,34 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 16, bottom: 64),
-                    child: const Text(
-                      'Email.com',
-                      style: TextStyle(
+                    margin: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      user.name!,
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      user.email!,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8, bottom: 64),
+                    child: Text(
+                      user.phone!,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -128,7 +162,50 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 left: 5,
                                               ),
                                               child: ElevatedButton(
-                                                onPressed: () async {},
+                                                onPressed: () async {
+                                                  if (passwordController.text !=
+                                                      passwordConfirmController
+                                                          .text) {
+                                                    context.pop();
+                                                    context.showSnackBar(
+                                                      'Match your password',
+                                                    );
+                                                  } else {
+                                                    try {
+                                                      final response =
+                                                          await HttpUtils
+                                                              .changePassword(
+                                                        User.fromJson(
+                                                          jsonDecode(
+                                                            getIt<SharedPreferences>()
+                                                                .getString(
+                                                              Constants.keyUser,
+                                                            )!,
+                                                          ),
+                                                        ),
+                                                        passwordController.text,
+                                                      );
+
+                                                      context.pop();
+                                                      if (response
+                                                              .status!.code! ==
+                                                          1000) {
+                                                        context.showSnackBar(
+                                                          'Your password is updated',
+                                                        );
+                                                      } else {
+                                                        context.showSnackBar(
+                                                          'Fail to update password',
+                                                        );
+                                                      }
+                                                    } catch (e) {
+                                                      context.pop();
+                                                      context.showSnackBar(
+                                                        e.toString(),
+                                                      );
+                                                    }
+                                                  }
+                                                },
                                                 child: const Padding(
                                                   padding: EdgeInsets.symmetric(
                                                     vertical: 16.0,
@@ -206,6 +283,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         ButtonWidget(
                           onPressed: () async {
+                            getIt<SharedPreferences>().remove(
+                              Constants.keyUser,
+                            );
                             context.popUntilFirst();
                           },
                           text: 'Logout',
