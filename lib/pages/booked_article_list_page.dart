@@ -24,13 +24,14 @@ class _BookedArticleListPageState extends State<BookedArticleListPage> {
   List<LocalNews> newsList = [];
   bool isLoading = false;
 
-  init(int categoryId) async {
+  init() async {
     isLoading = true;
     setState(() {});
 
     final response = await HttpUtils.getAllFavorite(
       User.fromJson(
-          jsonDecode(getIt<SharedPreferences>().getString(Constants.keyUser)!)),
+        jsonDecode(getIt<SharedPreferences>().getString(Constants.keyUser)!),
+      ),
     );
     newsList.clear();
     newsList.addAll(response.data ?? []);
@@ -42,7 +43,7 @@ class _BookedArticleListPageState extends State<BookedArticleListPage> {
   @override
   void initState() {
     super.initState();
-    init(Category.General.index + 1);
+    init();
   }
 
   @override
@@ -62,41 +63,73 @@ class _BookedArticleListPageState extends State<BookedArticleListPage> {
                             return Card(
                               margin: const EdgeInsets.all(8),
                               child: SizedBox(
-                                child: ListTile(
-                                  onTap: () {
-                                    context.push(
-                                      LocalNewsDetailPage(news: news),
-                                    );
-                                  },
-                                  contentPadding: const EdgeInsets.all(8),
-                                  title: TextTitleWidget(text: news.title),
-                                  subtitle: Column(
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.symmetric(
-                                          vertical: 8,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            TextSubtitleWidget(
-                                              text: news.author,
+                                child: Stack(
+                                  children: [
+                                    ListTile(
+                                      onTap: () {
+                                        context.push(
+                                          LocalNewsDetailPage(news: news),
+                                        );
+                                      },
+                                      contentPadding: const EdgeInsets.all(8),
+                                      title: TextTitleWidget(text: news.title),
+                                      subtitle: Column(
+                                        children: [
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                              vertical: 8,
                                             ),
-                                            TextSubtitleWidget(
-                                              text: news.createTime
-                                                  .toString()
-                                                  .split(' ')[0],
-                                            )
-                                          ],
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextSubtitleWidget(
+                                                  text: news.author,
+                                                ),
+                                                TextSubtitleWidget(
+                                                  text: news.createTime
+                                                      .toString()
+                                                      .split(' ')[0],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          LoadingImageWidget(
+                                            urlToImage: news.thumbnail,
+                                            alt: 'No image available',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 10,
+                                      right: 10,
+                                      child: FloatingActionButton(
+                                        backgroundColor: Colors.white,
+                                        onPressed: () async {
+                                          HttpUtils.removeFromFavorite(
+                                            User.fromJson(
+                                              jsonDecode(
+                                                getIt<SharedPreferences>()
+                                                    .getString(
+                                                  Constants.keyUser,
+                                                )!,
+                                              ),
+                                            ),
+                                            news,
+                                          );
+
+                                          newsList.remove(news);
+                                          setState(() {});
+                                        },
+                                        child: const Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
                                         ),
                                       ),
-                                      LoadingImageWidget(
-                                        urlToImage: news.thumbnail,
-                                        alt: 'No image available',
-                                      ),
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
                             );

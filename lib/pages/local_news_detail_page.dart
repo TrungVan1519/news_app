@@ -69,23 +69,6 @@ class _LocalNewsDetailPageState extends State<LocalNewsDetailPage> {
                         ),
                       ),
                       LoadingImageWidget(urlToImage: widget.news?.thumbnail),
-                      IconButton(
-                        onPressed: () {
-                          if (!isLiked) {
-                            HttpUtils.addToFavorite(user, widget.news!);
-                            isLiked = true;
-                            setState(() {});
-                          } else {
-                            HttpUtils.removeFromFavorite(user, widget.news!);
-                            isLiked = false;
-                            setState(() {});
-                          }
-                        },
-                        icon: Icon(
-                          Icons.favorite,
-                          color: isLiked ? Colors.red : Colors.grey,
-                        ),
-                      ),
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         child: TextContentWidget(text: widget.news?.content),
@@ -96,6 +79,24 @@ class _LocalNewsDetailPageState extends State<LocalNewsDetailPage> {
               ),
             ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () {
+          if (!isLiked) {
+            HttpUtils.addToFavorite(user, widget.news!);
+            isLiked = true;
+            setState(() {});
+          } else {
+            HttpUtils.removeFromFavorite(user, widget.news!);
+            isLiked = false;
+            setState(() {});
+          }
+        },
+        child: Icon(
+          Icons.favorite,
+          color: isLiked ? Colors.red : Colors.grey,
         ),
       ),
     );
