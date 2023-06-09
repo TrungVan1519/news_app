@@ -1,39 +1,35 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:news_app/models/local_news/local_news.dart';
-import 'package:news_app/models/response/user.dart';
 import 'package:news_app/pages/local_news_detail_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/utils/constant.dart';
 import 'package:news_app/utils/http_utils.dart';
-import 'package:news_app/utils/injections.dart';
 import 'package:news_app/widgets/loading_image_widget.dart';
 import 'package:news_app/widgets/text_subtitle_widget.dart';
 import 'package:news_app/widgets/text_title_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class BookedArticleListPage extends StatefulWidget {
-  const BookedArticleListPage({super.key});
+class LocalNewsListPage extends StatefulWidget {
+  const LocalNewsListPage({super.key, required this.isDomestic});
+
+  final bool isDomestic;
 
   @override
-  State<BookedArticleListPage> createState() => _BookedArticleListPageState();
+  State<LocalNewsListPage> createState() => _LocalNewsListPageState();
 }
 
-class _BookedArticleListPageState extends State<BookedArticleListPage> {
+class _LocalNewsListPageState extends State<LocalNewsListPage> {
   List<LocalNews> newsList = [];
   bool isLoading = false;
+  Category selectedCategory = Category.General;
 
   init(int categoryId) async {
     isLoading = true;
     setState(() {});
 
-    final response = await HttpUtils.getAllFavorite(
-      User.fromJson(
-          jsonDecode(getIt<SharedPreferences>().getString(Constants.keyUser)!)),
-    );
     newsList.clear();
-    newsList.addAll(response.data ?? []);
+    newsList.addAll(
+      await HttpUtils.getAllLocalNews(widget.isDomestic, categoryId),
+    );
 
     isLoading = false;
     setState(() {});
@@ -51,6 +47,47 @@ class _BookedArticleListPageState extends State<BookedArticleListPage> {
       body: SafeArea(
         child: Column(
           children: [
+            SizedBox(
+              height: 50,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (_, i) {
+                  final category = Category.values[i];
+
+                  return GestureDetector(
+                    onTap: () async {
+                      selectedCategory = category;
+                      setState(() {});
+
+                      await init(selectedCategory.index + 1);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: category == selectedCategory
+                            ? Colors.blue
+                            : Colors.grey,
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        category.name,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
+                itemCount: Category.values.length,
+              ),
+            ),
             Expanded(
               child: isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -105,7 +142,7 @@ class _BookedArticleListPageState extends State<BookedArticleListPage> {
                         )
                       : const Center(
                           child: TextSubtitleWidget(
-                            text: 'Favorite news list is not available',
+                            text: 'International news list is not available',
                           ),
                         ),
             ),

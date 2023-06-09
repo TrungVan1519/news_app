@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/pages/international_news_list_page.dart';
-import 'package:news_app/pages/domestic_news_list_page.dart';
+import 'package:news_app/pages/local_news_list_page.dart';
 import 'package:news_app/pages/profile_page.dart';
 import 'package:news_app/utils/build_context_ext.dart';
 import 'package:news_app/widgets/bottom_app_bar_item_widget.dart';
@@ -14,7 +13,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var i = 0;
-  final pages = const [DomesticNewsListPage(), InternationalNewsListPage()];
+  final pages = const [
+    LocalNewsListPage(isDomestic: true),
+    LocalNewsListPage(isDomestic: false),
+  ];
 
   @override
   Widget build(BuildContext context) {

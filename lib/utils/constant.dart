@@ -9,6 +9,8 @@ class Constants {
 
   static String userBaseUrl =
       'https://user-service-production-8a36.up.railway.app';
+  static String localNewsBaseUrl =
+      'https://newspaper-service-production.up.railway.app';
 
   static String keyUser = 'user';
 }
